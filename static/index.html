@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Interview Studio</title>
+  <meta name="description" content="AI-powered accessible mock interviews with voice, live scoring, and progress tracking.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body data-scale="md">
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="glow a" aria-hidden="true"></div>
+  <div class="glow b" aria-hidden="true"></div>
+
+  <div class="page">
+    <!-- ===================== TOP BAR ===================== -->
+    <header class="top">
+      <div class="wrap">
+        <div class="brand">
+          <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v10m0 0a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v4a3 3 0 0 0 3 3Zm-6-1a6 6 0 0 0 12 0M12 17v4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          Interview Studio
+        </div>
+        <div class="spacer"></div>
+
+        <!-- text size: accessibility (F10, R12) -->
+        <div class="textsize" role="group" aria-label="Text size">
+          <button class="s1" data-scale="sm" aria-pressed="false" aria-label="Smaller text">A</button>
+          <button class="s2" data-scale="md" aria-pressed="true" aria-label="Default text">A</button>
+          <button class="s3" data-scale="lg" aria-pressed="false" aria-label="Larger text">A</button>
+        </div>
+
+        <button class="chip-btn" id="theme-toggle" aria-label="Switch color theme">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          <span id="theme-label">Dark</span>
+        </button>
+
+        <div id="nav-actions" hidden style="display:flex;gap:8px;align-items:center">
+          <span class="user-name" id="user-name"></span>
+          <button class="chip-btn" id="nav-new">New</button>
+          <button class="chip-btn" id="nav-history">History</button>
+          <button class="chip-btn" id="logout-btn">Log out</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- ===================== AUTH (F15, R1, R2) ===================== -->
+      <section class="view" id="view-auth">
+        <div class="wrap">
+          <span class="eyebrow"><span class="live-dot" aria-hidden="true"></span>Accessible Interview System</span>
+          <h1>Rehearse the <em>real thing</em>, before it's real.</h1>
+          <p class="lede">A low-pressure, self-paced space to practice technical interviews with an AI interviewer — at your own speed, with feedback you can act on.</p>
+
+          <div class="panel pad" style="margin-top:26px">
+            <div class="tabs" id="auth-tabs" role="group" aria-label="Log in or create account">
+              <button data-mode="login" aria-pressed="true">Log in</button>
+              <button data-mode="register" aria-pressed="false">Create account</button>
+            </div>
+            <form id="auth-form" novalidate>
+              <div class="form-row" id="name-field" hidden>
+                <label class="fld" for="f-name">Name</label>
+                <input type="text" id="f-name" autocomplete="name" placeholder="Riket Patel">
+              </div>
+              <div class="form-row">
+                <label class="fld" for="f-email">Email</label>
+                <input type="email" id="f-email" autocomplete="email" placeholder="you@example.com" required>
+              </div>
+              <div class="form-row">
+                <label class="fld" for="f-pass">Password</label>
+                <input type="password" id="f-pass" autocomplete="current-password" placeholder="••••••••" required>
+              </div>
+              <button class="btn primary full" id="auth-submit" type="submit">Log in</button>
+              <p class="error" id="auth-error" role="alert"></p>
+              <p class="muted" style="font-size:12.5px;margin:4px 0 0">Demo account — email <b>demo@interview.studio</b>, password <b>demo123</b></p>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== SETUP (R3, R4, R5, F2, F8) ===================== -->
+      <section class="view" id="view-setup" hidden>
+        <div class="wrap hero">
+          <p class="section-label">Set up your session</p>
+          <div class="panel pad">
+            <div class="setup-grid">
+              <div>
+                <div class="opt-group">
+                  <span class="glabel">Interview track</span>
+                  <div class="tracks" id="track-group" role="group" aria-label="Interview track">
+                    <button class="track" data-track="Behavioral" aria-pressed="true">
+                      <span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M8 12h8M8 8h8m-8 8h5M4 4h16v12H8l-4 4V4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
+                      <span><span class="tt">Behavioral</span><span class="td">STAR stories & judgment</span></span><span class="chk"></span>
+                    </button>
+                    <button class="track" data-track="Technical / Coding" aria-pressed="false">
+                      <span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="m8 9-3 3 3 3m8-6 3 3-3 3m-3-9-2 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                      <span><span class="tt">Technical / Coding</span><span class="td">Problem-solving out loud</span></span><span class="chk"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div class="opt-group">
+                  <span class="glabel">Difficulty</span>
+                  <div class="seg" id="diff-group" role="group" aria-label="Difficulty">
+                    <button data-difficulty="Warm-up" aria-pressed="false">Warm-up</button>
+                    <button data-difficulty="Standard" aria-pressed="true">Standard</button>
+                    <button data-difficulty="Onsite" aria-pressed="false">Onsite</button>
+                  </div>
+                </div>
+                <div class="opt-group">
+                  <span class="glabel">Length</span>
+                  <div class="seg" id="len-group" role="group" aria-label="Session length">
+                    <button data-length="15" aria-pressed="true">15 min</button>
+                    <button data-length="30" aria-pressed="false">30 min</button>
+                    <button data-length="45" aria-pressed="false">45 min</button>
+                  </div>
+                </div>
+                <div class="opt-group">
+                  <span class="glabel">Mode</span>
+                  <div class="seg" id="mode-group" role="group" aria-label="Mode">
+                    <button data-mode="mock" aria-pressed="true">Full mock</button>
+                    <button data-mode="practice" aria-pressed="false">One-off question</button>
+                  </div>
+                </div>
+                <div class="opt-group">
+                  <div class="toggle-row">
+                    <span><span class="tt">Read questions aloud</span><span class="td">Text-to-speech</span></span>
+                    <button class="switch" id="aloud-switch" role="switch" aria-checked="false" aria-label="Read questions aloud"></button>
+                  </div>
+                  <div class="toggle-row">
+                    <span><span class="tt">Voice answers</span><span class="td">Speak instead of typing</span></span>
+                    <button class="switch" id="voice-switch" role="switch" aria-checked="false" aria-label="Voice answers"></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- job-description based questions (F2, R5) -->
+            <div class="opt-group" id="jd-wrap">
+              <span class="glabel">Tailor to a job (optional)</span>
+              <div class="form-row"><input type="text" id="f-jobtitle" placeholder="Job title — e.g. Junior Mobile Developer"></div>
+              <div class="form-row"><textarea id="f-jd" rows="3" placeholder="Paste a job description and questions will be generated from the skills it names."></textarea></div>
+            </div>
+
+            <button class="btn amber full" id="begin-btn"><svg viewBox="0 0 24 24" fill="none"><path d="M5 3.5 19 12 5 20.5V3.5Z" fill="currentColor"/></svg>Begin interview</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== INTERVIEW (R6-R8, F5, F6, F9, F12) ===================== -->
+      <section class="view" id="view-interview" hidden>
+        <div class="wrap" style="padding-block:24px 40px">
+          <div class="panel stage">
+            <div class="chat-col">
+              <div class="chat-head">
+                <span class="avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2a5 5 0 0 0-5 5v3a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5Zm8 9a8 8 0 0 1-16 0M12 19v3M8 22h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <div><div class="who">Ava · AI Interviewer</div><div class="role" id="ctx-role">Behavioral · Standard</div></div>
+                <span class="qcount" id="qcount">Q <b>1</b>/4</span>
+                <div class="head-actions">
+                  <button class="icon-btn" id="aloud-btn" aria-pressed="false" aria-label="Read questions aloud (text-to-speech)"><svg viewBox="0 0 24 24" fill="none"><path d="M11 5 6 9H3v6h3l5 4V5Z" fill="currentColor"/><path d="M16 9a3 3 0 0 1 0 6M18.5 6.5a7 7 0 0 1 0 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+                  <button class="icon-btn" id="pause-btn" aria-label="Pause and save interview"><svg viewBox="0 0 24 24" fill="none"><path d="M8 5v14M16 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+                </div>
+              </div>
+
+              <div class="messages" id="messages" role="log" aria-live="polite" aria-label="Interview conversation"></div>
+
+              <div class="composer">
+                <button class="mic" id="mic" aria-pressed="false" aria-label="Toggle voice input">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3ZM6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="inpwrap">
+                  <label class="sr-only" for="answer">Your answer</label>
+                  <textarea id="answer" rows="1" placeholder="Type your answer, or tap the mic to speak…"></textarea>
+                  <button class="send" id="send" aria-label="Send answer" disabled><svg viewBox="0 0 24 24" fill="none"><path d="M4 12 20 4l-6 16-3-7-7-1Z" fill="currentColor"/></svg></button>
+                </div>
+              </div>
+              <div class="hint listening" id="listen-hint" hidden>● Listening… speak your answer, tap the mic when done.</div>
+            </div>
+
+            <aside class="rail" id="rail" aria-label="Live feedback">
+              <div>
+                <h4>Live score</h4>
+                <div class="score-ring">
+                  <svg class="ring" viewBox="0 0 42 42" aria-hidden="true">
+                    <circle cx="21" cy="21" r="16" fill="none" stroke="var(--line)" stroke-width="5"/>
+                    <circle id="ring-fg" cx="21" cy="21" r="16" fill="none" stroke="var(--amber)" stroke-width="5" stroke-linecap="round" stroke-dasharray="100.5" stroke-dashoffset="100.5" transform="rotate(-90 21 21)"/>
+                    <text id="ring-num" x="21" y="24.5" text-anchor="middle" font-size="11" fill="var(--ink)" font-family="var(--font-mono)">–</text>
+                  </svg>
+                  <div><div class="slabel">Confidence on your last answer</div></div>
+                </div>
+              </div>
+              <div class="meter">
+                <h4 style="margin-bottom:12px">Breakdown</h4>
+                <div class="row"><span>Structure (STAR)</span><span class="v" id="v-structure">–</span></div>
+                <div class="bar"><i id="bar-structure"></i></div>
+                <div class="row"><span>Clarity</span><span class="v" id="v-clarity">–</span></div>
+                <div class="bar"><i id="bar-clarity"></i></div>
+                <div class="row"><span>Relevance</span><span class="v" id="v-relevance">–</span></div>
+                <div class="bar"><i id="bar-relevance"></i></div>
+                <div class="row"><span>Completeness</span><span class="v" id="v-completeness">–</span></div>
+                <div class="bar"><i id="bar-completeness"></i></div>
+              </div>
+              <div class="tip"><span class="k">Coaching</span><span id="tip-body">Answer the question to see your live score and one concrete tip.</span></div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== REPORT (F7, R9) ===================== -->
+      <section class="view" id="view-report" hidden>
+        <div class="wrap" style="padding-block:34px 40px">
+          <p class="section-label">Interview report</p>
+          <div class="panel pad">
+            <div class="report-hero">
+              <svg class="big-ring" viewBox="0 0 42 42" aria-hidden="true">
+                <circle cx="21" cy="21" r="16" fill="none" stroke="var(--line)" stroke-width="4"/>
+                <circle id="rep-ring" cx="21" cy="21" r="16" fill="none" stroke="var(--amber)" stroke-width="4" stroke-linecap="round" stroke-dasharray="100.5" stroke-dashoffset="100.5" transform="rotate(-90 21 21)"/>
+                <text id="rep-score" x="21" y="25" text-anchor="middle" font-size="12" fill="var(--ink)" font-family="var(--font-mono)">–</text>
+              </svg>
+              <div>
+                <h2>Nice work — here's how it went</h2>
+                <p class="muted" style="margin:0">Your overall score, strengths, and where to focus next.</p>
+              </div>
+            </div>
+            <div class="rband">
+              <div class="rcard good"><h5>Strengths</h5><p id="rep-strengths" style="margin:0"></p></div>
+              <div class="rcard grow"><h5>Where to improve</h5><p id="rep-improve" style="margin:0"></p></div>
+            </div>
+            <p class="section-label" style="margin-top:26px">Question-by-question</p>
+            <div class="hist" id="rep-transcript"></div>
+            <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap">
+              <button class="btn amber" id="rep-new">Practice again</button>
+              <button class="btn primary" id="rep-history">View history</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== HISTORY + STATS (F13, F14, R14-R16) ===================== -->
+      <section class="view" id="view-history" hidden>
+        <div class="wrap" style="padding-block:34px 40px">
+          <p class="section-label">Your progress</p>
+          <div class="stat-grid">
+            <div class="stile"><div class="n" id="stat-completed">0</div><div class="l">Interviews completed</div></div>
+            <div class="stile"><div class="n" id="stat-avg">–</div><div class="l">Average score</div></div>
+            <div class="stile"><div class="n" id="stat-weak" style="font-size:18px;font-family:var(--font-body)">–</div><div class="l">Focus area next</div></div>
+          </div>
+          <p class="section-label">Past sessions</p>
+          <div class="hist" id="hist-list"></div>
+          <button class="btn amber" id="hist-new" style="margin-top:20px">Start a new interview</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <span>Accessible Interview System — CSSE 4901 Capstone, Savage 17.</span>
+        <span class="a11y-note"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2 3 6v6c0 5 3.8 8.4 9 10 5.2-1.6 9-5 9-10V6l-9-4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Keyboard, screen-reader & text-to-speech ready</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
