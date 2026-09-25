@@ -1,0 +1,7 @@
+# Interview Studio — Python dependencies
+Flask==3.0.3
+python-dotenv==1.0.1
+mysql-connector-python==9.0.0
+openai==1.51.0
+Werkzeug==3.0.4
+gunicorn==22.0.0
